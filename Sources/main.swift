@@ -80,7 +80,7 @@ enum Prefs {
 func fmt(_ n: Int) -> String {
     n >= 1_000_000 ? String(format: "%.2fM", Double(n) / 1e6) : n >= 1000 ? String(format: "%.1fK", Double(n) / 1e3) : "\(n)"
 }
-func pct(_ v: Int, _ l: Int) -> Int { l > 0 ? Int((Double(v) / Double(l) * 100).rounded()) : 0 }
+func pct(_ v: Int, _ l: Int) -> Int { l > 0 ? min(100, Int((Double(v) / Double(l) * 100).rounded())) : 0 }
 
 // MARK: - Uygulama
 
