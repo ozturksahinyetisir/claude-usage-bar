@@ -1,0 +1,9 @@
+# Build çıktıları
+*.app/
+.build/
+# Kişisel kullanım verisi ve gizli bilgiler asla commit edilmez
+usage.json
+.env
+*.pem
+*.key
+.DS_Store
