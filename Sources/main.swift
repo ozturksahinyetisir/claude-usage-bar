@@ -138,7 +138,13 @@ final class App: NSObject, NSApplicationDelegate {
             if let w = o.weekPct { add("Resmî haftalık limit: %\(w)") }
             let ago = Int(Date().timeIntervalSince(o.updated) / 60); add("   Son güncelleme: \(ago) dk önce")
         } else {
-            add(official == nil ? "Resmî veri yok — yerel tahmin gösteriliyor (~)" : "Resmî veri eski — yerel tahmin gösteriliyor (~)")
+            if let o = official {
+                let h = Int(Date().timeIntervalSince(o.updated) / 3600)
+                add("⚠ Resmî veri \(h >= 1 ? "\(h) saat" : "\(Int(Date().timeIntervalSince(o.updated) / 60)) dk") önce güncellendi; yerel tahmin gösteriliyor (~)")
+                add("   Güncelleme görevi çalışmıyor olabilir (README → Resmî mod)")
+            } else {
+                add("Resmî veri yok — yerel tahmin gösteriliyor (~)")
+            }
         }
         m.addItem(.separator())
         add("Yerel tahmin, 5 saat: \(fmt(snap.blockTokens)) / \(fmt(Prefs.fiveHourLimit))  (%\(p5))")

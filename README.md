@@ -51,8 +51,8 @@ Anthropic does not publish these, so percentages in this mode are approximate.
 The official numbers are only readable from inside the Claude desktop app, so a small scheduled task copies them to a file the menu bar app reads:
 
 1. In the Claude desktop app, open **Scheduled** and create a task running every 5 minutes (`*/5 * * * *`).
-2. Paste the prompt from [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md).
-3. Click **Run now** once and approve the tool prompts.
+2. Install `scripts/write-usage.sh` and paste the prompt from [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md).
+3. Click **Run now** once and choose **"Always allow"** for the `write.sh` command. If a run ever hangs waiting for approval, later runs will not start.
 
 The task writes `~/.claude-usage-bar/usage.json`. The Claude app must be open for it to run.
 Each run is a very short session, so it costs a negligible amount of your own usage. 5 minutes is a good balance;

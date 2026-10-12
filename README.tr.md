@@ -50,8 +50,8 @@ Anthropic bu rakamları yayımlamadığı için bu moddaki yüzdeler yaklaşıkt
 Resmî rakamlar yalnızca Claude masaüstü uygulamasının içinden okunabildiği için, küçük bir zamanlanmış görev bunları menü çubuğu uygulamasının okuduğu bir dosyaya kopyalar:
 
 1. Claude masaüstü uygulamasında **Scheduled** bölümünden 5 dakikada bir (`*/5 * * * *`) çalışan yeni bir görev oluştur.
-2. Prompt olarak [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md) içindeki metni yapıştır.
-3. Bir kez **Run now** de ve istenen araç izinlerini onayla.
+2. `scripts/write-usage.sh` betiğini kur ve prompt olarak [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md) içindeki metni yapıştır.
+3. Bir kez **Run now** de ve `write.sh` komutu için **"Her zaman izin ver"** (Always allow) seç. Bir tur izin beklerken takılırsa sonraki turlar başlamaz.
 
 Görev `~/.claude-usage-bar/usage.json` dosyasını yazar. Çalışması için Claude uygulamasının açık olması gerekir.
 Her tur çok kısa bir oturumdur, kendi kullanımından ihmal edilebilir kadar yer. 5 dakika iyi bir dengedir; çok daha sık yaparsan ölçümün kendisi limitini yemeye başlar.
