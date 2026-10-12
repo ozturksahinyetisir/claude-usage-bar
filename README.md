@@ -52,11 +52,32 @@ The official numbers are only readable from inside the Claude desktop app, so a 
 
 1. In the Claude desktop app, open **Scheduled** and create a task running every 5 minutes (`*/5 * * * *`).
 2. Install `scripts/write-usage.sh` and paste the prompt from [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md).
-3. Click **Run now** once and choose **"Always allow"** for the `write.sh` command. If a run ever hangs waiting for approval, later runs will not start.
+3. Allow the script in `~/.claude/settings.json` (one line, see the guide) and click **Run now** once.
 
 The task writes `~/.claude-usage-bar/usage.json`. The Claude app must be open for it to run.
 Each run is a very short session, so it costs a negligible amount of your own usage. 5 minutes is a good balance;
 going much lower makes the measurement itself eat your quota.
+
+## Troubleshooting
+
+### The bar shows `~5h %78` / "official data is N hours old"
+
+The app fell back to the **local estimate** because `~/.claude-usage-bar/usage.json` is older than 20 minutes. The `~` and the warning line in the menu mean exactly that. Pressing **Refresh** does not help: it only re-reads the file.
+
+**Why the file stops updating.** The scheduled task needs to run one shell command (`write.sh`). Scheduled tasks run unattended, and when a tool needs approval the Claude app may show **no approval prompt at all**. The run then waits forever, and while one run is "running" the scheduler does **not** start the next one. From that moment `usage.json` goes stale. Check the **Scheduled** section: a run stuck in *running* for hours is the sign.
+
+**Fix.**
+1. Stop the stuck run (open it and stop the session).
+2. Pre-approve the script in `~/.claude/settings.json` (this works without any prompt):
+   ```json
+   { "permissions": { "allow": ["Bash(~/.claude-usage-bar/write.sh:*)"] } }
+   ```
+   The one-command version is in [docs/refresh-task-prompt.md](docs/refresh-task-prompt.md#3-betiğe-izni-ver--allow-the-script).
+3. Click **Run now**. `usage.json` should update within seconds, then every ~5 minutes on its own.
+
+Other causes: the Claude desktop app is closed (the task runs on next launch) or the Mac was asleep (the next run catches up).
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ## Menu
 

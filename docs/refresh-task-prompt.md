@@ -29,13 +29,45 @@ Create a new task in the Claude desktop app's **Scheduled** section, schedule `*
 4. Betiğin ürettiği tek satırlık çıktıyı yaz ve bitir.
 ```
 
-## 3. İzni bir kez ver / Approve once
+## 3. Betiğe izni ver / Allow the script
 
-Görevi **Run now** ile bir kez çalıştır. Araç izni sorulduğunda `~/.claude-usage-bar/write.sh` komutu için **"Always allow"** (her zaman izin ver) seç.
-Böylece sonraki turlar sormadan çalışır. İzin yalnızca bu betiğe verilir, genel `Bash` izni değildir.
-Run the task once with **Run now**. When asked, choose **"Always allow"** for the `~/.claude-usage-bar/write.sh` command so later runs don't pause. The permission covers this script only, not general `Bash`.
+Zamanlanmış görevler kimse başında değilken çalışır. Araç izni gerektiğinde **onay penceresi çıkmayabilir** ve tur sonsuza dek bekler
+(ayrıntı: README → Sorun giderme). Bu yüzden izni önceden, yalnızca bu betik için ver.
+Scheduled tasks run unattended. When a tool needs approval, **no prompt may ever appear** and the run waits forever
+(see README → Troubleshooting). So grant the permission up front, for this script only.
 
-> Not: Tur takılı kalırsa (izin beklerken) sonraki turlar başlamaz ve uygulama `~` ile işaretli yerel tahmine düşer.
-> Note: if a run hangs waiting for approval, later runs won't start and the app falls back to the `~` local estimate.
+`~/.claude/settings.json` dosyasına şunu ekle (dosya yoksa oluştur; varsa yalnızca `permissions.allow` listesine satırı ekle):
+Add this to `~/.claude/settings.json` (create it if missing; if it exists, only add the line to `permissions.allow`):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(~/.claude-usage-bar/write.sh:*)"
+    ]
+  }
+}
+```
+
+Mevcut ayarlarını bozmadan eklemek için tek komut / one command that keeps your existing settings:
+
+```bash
+python3 - <<'PY'
+import json, os
+p = os.path.expanduser('~/.claude/settings.json')
+d = json.load(open(p)) if os.path.exists(p) else {}
+allow = d.setdefault('permissions', {}).setdefault('allow', [])
+rule = 'Bash(~/.claude-usage-bar/write.sh:*)'
+if rule not in allow: allow.append(rule)
+json.dump(d, open(p, 'w'), indent=2); open(p, 'a').write('\n')
+print('tamam:', rule)
+PY
+```
+
+İzin yalnızca bu betiğe verilir (genel `Bash` izni değildir). Betik dört değer kabul eder ve başka hiçbir şeyi çalıştırmaz.
+The permission covers this script only (not general `Bash`). The script accepts four values and runs nothing else.
+
+Sonra görevi bir kez **Run now** ile çalıştır ve `~/.claude-usage-bar/usage.json` dosyasının güncellendiğini doğrula.
+Then run the task once with **Run now** and check that `~/.claude-usage-bar/usage.json` is updated.
 
 Tüm bunlar senin kendi Claude hesabınla, kendi bilgisayarında çalışır. Hiçbir anahtar (key/token) girmen gerekmez.
